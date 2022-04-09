@@ -43,7 +43,7 @@ if len(txt_vars_list) == len(txt_unicode_list):
         first, second = i[0], i[1]
         if isinstance(second, type(first)):
             if first == second:
-                print('Строки равны.')
+                print(f'Строки "{first}" и "{second}" равны.')
         else:
             print(f'Аргументы {first} и {second} не совпадают по типу. '
                   f'{type(first)} против {type(second)}.')
