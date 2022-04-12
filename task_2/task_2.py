@@ -13,6 +13,7 @@ import json
 
 
 def write_order_to_json(item, quantity, price, buyer, date):
+    # почему то он упорно ищет файл в корне, а не в текущей папке
     with open('task_2/orders.json') as file_obj:
         content = json.load(file_obj)
 
