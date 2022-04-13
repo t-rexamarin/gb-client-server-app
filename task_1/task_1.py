@@ -74,13 +74,13 @@ def get_data():
 
 def write_to_csv():
     data = get_data()
-    with open('task_1.csv', 'w') as file_obj:
+    with open('task_1/task_1.csv', 'w') as file_obj:
         file_writer = csv.writer(file_obj)
         file_writer.writerow(data[0])  # headers
         for row in zip(data[1], data[2], data[3], data[4]):
             file_writer.writerow(row)
 
-    with open('task_1.csv') as file_obj:
+    with open('task_1/task_1.csv') as file_obj:
         print(file_obj.read())
 
 

@@ -1,1 +1,18 @@
-{"orders": []}
+{
+    "orders": [
+        {
+            "item": "item1",
+            "quantity": 1,
+            "price": 100.0,
+            "buyer": "buyer1",
+            "date": "01.01.2022"
+        },
+        {
+            "item": "предмет2",
+            "quantity": 1,
+            "price": 100.0,
+            "buyer": "покупатель2",
+            "date": "01.01.2022"
+        }
+    ]
+}
