@@ -1,0 +1,9 @@
+int: 2
+list:
+- key1-value1
+- key1-value2
+- key1-value3
+non-ascii:
+  1: 100¥-1000¥
+  2: 100£-1000£
+  3: 100€-1000€
