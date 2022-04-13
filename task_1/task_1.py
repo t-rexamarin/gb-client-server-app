@@ -31,9 +31,9 @@ from re import compile, match
 def get_data():
     main_data = []
     files = [
-        'info_1.txt',
-        'info_2.txt',
-        'info_3.txt'
+        'task_1/info_1.txt',
+        'task_1/info_2.txt',
+        'task_1/info_3.txt'
     ]
     req_lines = [
         'Изготовитель системы',
@@ -58,11 +58,14 @@ def get_data():
         with open(file, 'r', encoding=charset) as file_obj:
             lines = file_obj.readlines()
             for line in lines:
+                # print(line)
                 for index, req_line in enumerate(req_lines):
-                    reg_ex = compile(r'(?P<name>{})(:+\s)(?P<value>.+)'.format(req_line))
+                    # reg_ex = compile(r'(?P<name>{})(:+\s)(?P<value>.+)'.format(req_line))
+                    reg_ex = compile(r'(?P<name>{}):(\s+)(?P<value>.+)'.format(req_line))
                     result = match(reg_ex, line)
                     if result:
-                        req_lines_values[index].append(result.group('value').strip())
+                        # req_lines_values[index].append(result.group('value').strip())
+                        req_lines_values[index].append(result.group('value'))
 
     for req_lines_value in req_lines_values:
         main_data.append(req_lines_value)
