@@ -13,7 +13,7 @@
 import json
 import time
 from socket import *
-from common.common import Common
+from common.common import Common, port_check, address_check
 from sys import argv, exit
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_IP_ADDRESS, \
     DEFAULT_PORT
@@ -51,35 +51,21 @@ class Client(Common):
 
 
 def main():
-    try:
-        if '-p' in argv:
-            server_port = int(argv[argv.index('-p') + 1])
-        else:
-            server_port = DEFAULT_PORT
-
-        if server_port < 1024 or server_port > 65535:
-            raise ValueError
-    except IndexError:
-        print('После параметра "-p" необходимо указать номер порта, на котором будет запущен сервер.')
-        exit(1)
-    except ValueError:
-        print('Порт должен быть в диапазоне от 1024 до 65535.')
-        exit(1)
-
-    # адрес
-    try:
-        if '-a' in argv:
-            server_address = argv[argv.index('-a') + 1]
-        else:
-            server_address = DEFAULT_IP_ADDRESS
-    except IndexError:
-        print('После параметра "-a" обходимо указать адрес, который будет слушать сервер')
-        exit(1)
-
     # запуск сокета
-    c = Client(server_address, server_port)
-    client = c.start()
-    c.connect(client)
+    # проверки порта и адреса
+    server_port = port_check(argv)
+    server_address = address_check(argv)
+
+    if server_port and server_address:
+        c = Client(server_address, server_port)
+        client = c.start()
+
+    try:
+        c.connect(client)
+    except ConnectionRefusedError:
+        print(f'На {server_address}:{server_port} сервер не найден.')
+        exit(1)
+
     msg_to_server = c.create_msg()
     c.send_msg(client, msg_to_server)
     try:

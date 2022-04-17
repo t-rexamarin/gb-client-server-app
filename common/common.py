@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import json
 from socket import socket
-from .settings import ENCODING, MAX_PACKAGE_LENGTH
+from sys import exit
+from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 
 
 class Common:
@@ -46,10 +47,46 @@ class Common:
         :param socket_:
         :type socket_:
         :param message:
-        :type message: list
+        :type message: dict
         :return:
         :rtype:
         """
         serialised_message = json.dumps(message)  # переводим в байты
         encoded_message = serialised_message.encode(ENCODING)
         socket_.send(encoded_message)
+
+
+def port_check(args):
+    # порт
+    min_port, max_port = 1024, 65535
+    try:
+        if '-p' in args:
+            listen_port = int(args[args.index('-p') + 1])
+        else:
+            listen_port = DEFAULT_PORT
+
+        if listen_port < min_port or listen_port > max_port:
+            raise ValueError
+    except IndexError:
+        print('После параметра "-p" необходимо указать номер порта, на котором будет запущен сервер.')
+        # есть у меня сомнения, что неправильно вызывать выход из скрипта в какой то другой функции
+        exit(1)
+    except ValueError:
+        print(f'Порт должен быть в диапазоне от {min_port} до {max_port}.')
+        exit(1)
+    else:
+        return listen_port
+
+
+def address_check(args):
+    # адрес
+    try:
+        if '-a' in args:
+            listen_address = args[args.index('-a') + 1]
+        else:
+            listen_address = DEFAULT_IP_ADDRESS
+    except IndexError:
+        print('После параметра "-a" обходимо указать адрес, который будет слушать сервер')
+        exit(1)
+    else:
+        return listen_address
