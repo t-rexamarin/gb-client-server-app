@@ -52,15 +52,28 @@ class Client(Common):
 
 def main():
     try:
-        server_address = argv[2]
-        server_port = int(argv[3])
+        if '-p' in argv:
+            server_port = int(argv[argv.index('-p') + 1])
+        else:
+            server_port = DEFAULT_PORT
+
         if server_port < 1024 or server_port > 65535:
             raise ValueError
     except IndexError:
-        server_address = DEFAULT_IP_ADDRESS
-        server_port = DEFAULT_PORT
+        print('После параметра "-p" необходимо указать номер порта, на котором будет запущен сервер.')
+        exit(1)
     except ValueError:
         print('Порт должен быть в диапазоне от 1024 до 65535.')
+        exit(1)
+
+    # адрес
+    try:
+        if '-a' in argv:
+            server_address = argv[argv.index('-a') + 1]
+        else:
+            server_address = DEFAULT_IP_ADDRESS
+    except IndexError:
+        print('После параметра "-a" обходимо указать адрес, который будет слушать сервер')
         exit(1)
 
     # запуск сокета

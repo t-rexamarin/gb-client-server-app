@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import json
 from socket import *
 from common.common import Common
-from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_PORT, MAX_CONNECTIONS
+from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_PORT, MAX_CONNECTIONS, \
+    DEFAULT_IP_ADDRESS
 from sys import argv, exit
 
 
@@ -15,7 +15,7 @@ class Server(Common):
 
     def start(self):
         s = self.socket_init(AF_INET, SOCK_STREAM)
-        s.setsockopt(SOL_SOCKET, SOCK_STREAM, 1)  # запуск на занятых портах
+        s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # запуск на занятых портах
         s.bind((self.url, self.port))
         s.listen(self.connections)
         return s
@@ -62,7 +62,7 @@ def main():
         if '-a' in argv:
             listen_address = argv[argv.index('-a') + 1]
         else:
-            listen_address = ''
+            listen_address = DEFAULT_IP_ADDRESS
     except IndexError:
         print('После параметра "-a" обходимо указать адрес, который будет слушать сервер')
         exit(1)

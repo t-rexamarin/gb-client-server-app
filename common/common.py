@@ -53,6 +53,3 @@ class Common:
         serialised_message = json.dumps(message)  # переводим в байты
         encoded_message = serialised_message.encode(ENCODING)
         socket_.send(encoded_message)
-
-    def close(self, socket_):
-        return socket_.close()
