@@ -1,9 +1,6 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 from socket import *
 from common.common import Common, port_check, address_check
-from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_PORT,\
-    MAX_CONNECTIONS, DEFAULT_IP_ADDRESS
+from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, MAX_CONNECTIONS
 from sys import argv, exit
 
 
@@ -19,11 +16,11 @@ class Server(Common):
         :return:
         :rtype:
         """
-        s = self.socket_init(AF_INET, SOCK_STREAM)
-        s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # запуск на занятых портах
-        s.bind((self.url, self.port))
-        s.listen(self.connections)
-        return s
+        server = socket(AF_INET, SOCK_STREAM)
+        server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # запуск на занятых портах
+        server.bind((self.url, self.port))
+        server.listen(self.connections)
+        return server
 
     def process_client_message(self, message):
         """
@@ -56,22 +53,22 @@ def main():
 
     # запускаем сервер
     if listen_port and listen_address:
-        s = Server(listen_port, listen_address, MAX_CONNECTIONS)
+        server = Server(listen_port, listen_address, MAX_CONNECTIONS)
         try:
-            server = s.start()
+            server_running = server.start()
         except Exception as e:
             print(e)  # не знаю, что тут может быть, поэтому так
             exit(1)
 
     while True:
-        client, client_address = server.accept()
-        try:
-            msg_from_client = s.get_msg(client)
-            print(msg_from_client)
+        client, client_address = server_running.accept()
 
-            response = s.process_client_message(msg_from_client)
-            s.send_msg(client, response)
+        try:
+            msg_from_client = server.get_msg(client)
+            response = server.process_client_message(msg_from_client)
+            server.send_msg(client, response)
             client.close()
+            print('Сообщенеи клиента успешно обработано.')
         except ValueError:
             print('Принято некорректное сообщение от клиента.')
             client.close()

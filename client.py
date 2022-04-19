@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Функции клиента:
     ● сформировать presence-сообщение;
@@ -10,13 +8,12 @@
         ○ addr — ip-адрес сервера;
         ○ port — tcp-порт на сервере, по умолчанию 7777.
 """
-import json
 import time
 from socket import *
 from common.common import Common, port_check, address_check
 from sys import argv, exit
-from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_IP_ADDRESS, \
-    DEFAULT_PORT
+from socket import socket
+from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR
 
 
 class Client(Common):
@@ -25,12 +22,12 @@ class Client(Common):
         self.port = port
 
     def start(self):
-        c = self.socket_init(AF_INET, SOCK_STREAM)
-        # c.connect((self.addr, self.port))
-        return c
+        client = socket(AF_INET, SOCK_STREAM)
+        return client
 
     def connect(self, client):
-        return client.connect((self.addr, self.port))
+        client_connect = client.connect((self.addr, self.port))
+        return client_connect
 
     def create_msg(self, account_name='Guest'):
         msg = {
@@ -46,7 +43,7 @@ class Client(Common):
         if RESPONSE in message:
             if message[RESPONSE] == 200:
                 return '200 : OK'
-            return '400 : {}'.format(message[ERROR])
+            return f'{message[RESPONSE]} : {message[ERROR]}'
         raise ValueError
 
 
@@ -57,19 +54,19 @@ def main():
     server_address = address_check(argv)
 
     if server_port and server_address:
-        c = Client(server_address, server_port)
-        client = c.start()
+        client = Client(server_address, server_port)
+        client_running = client.start()
 
     try:
-        c.connect(client)
+        client.connect(client_running)
     except ConnectionRefusedError:
         print(f'На {server_address}:{server_port} сервер не найден.')
         exit(1)
 
-    msg_to_server = c.create_msg()
-    c.send_msg(client, msg_to_server)
+    msg_to_server = client.create_msg()
+    client.send_msg(client_running, msg_to_server)
     try:
-        answer = c.process_answer(c.get_msg(client))
+        answer = client.process_answer(client.get_msg(client_running))
         print(answer)
     except ValueError:
         print('Не удалось декодировать сообщение сервера.')

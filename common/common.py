@@ -1,29 +1,9 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 import json
-from socket import socket
 from sys import exit
 from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 
 
 class Common:
-    def socket_init(self, domain, soc_type):
-        """
-        Инициация сокета
-        :param domain:
-        :type domain:
-        :param soc_type:
-        :type soc_type:
-        :return:
-        :rtype:
-        """
-        """
-        AF_INET (Internet протоколы)
-        SOCK_STREAM Этот тип обеспечивает последовательный, надежный, ориентированный 
-        на установление двусторонней связи поток байтов
-        """
-        return socket(domain, soc_type)
-
     def get_msg(self, message):
         """
         Прием и декодирование сообщения
