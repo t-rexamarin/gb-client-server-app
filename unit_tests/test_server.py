@@ -1,5 +1,4 @@
 import unittest
-
 from client import Client
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, DEFAULT_PORT, DEFAULT_IP_ADDRESS, \
     MAX_CONNECTIONS, ERROR

@@ -1,9 +1,6 @@
 import unittest
-
 from client import Client
-from common.settings import DEFAULT_PORT, DEFAULT_IP_ADDRESS, MAX_CONNECTIONS, ACTION, PRESENCE, TIME, USER, \
-    ACCOUNT_NAME, RESPONSE, ERROR
-from server import Server
+from common.settings import DEFAULT_PORT, DEFAULT_IP_ADDRESS, ACTION, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR
 
 
 class ClientTests(unittest.TestCase):
@@ -13,6 +10,11 @@ class ClientTests(unittest.TestCase):
     ]
 
     def setUp(self) -> None:
+        """
+        При запуске каждого тестового метода
+        :return:
+        :rtype:
+        """
         self.test_client = Client(*self.test_client_data)
         self.test_client_started = self.test_client.start()
 
@@ -25,10 +27,17 @@ class ClientTests(unittest.TestCase):
         test_client_family = 'AddressFamily.AF_INET'
         test_client_type = 'SocketKind.SOCK_STREAM'
 
-        self.assertEqual(str(self.test_client_started.family),
-                         test_client_family)
-        self.assertEqual(str(self.test_client_started.type),
-                         test_client_type)
+        test_client_running_family = str(self.test_client_started.family)
+        test_client_running_type = str(self.test_client_started.type)
+
+        self.assertEqual(test_client_running_family,
+                         test_client_family,
+                         f'AddressFamily не совпдают. '
+                         f'Должен быть {test_client_family}. Получили {test_client_running_family}.')
+        self.assertEqual(test_client_running_type,
+                         test_client_type,
+                         f'SocketKind не совпдают. '
+                         f'Должен быть {test_client_type}. Получили {test_client_running_type}.')
 
     """
     Не проверяется, т.к. метод connect вернет None
@@ -55,12 +64,12 @@ class ClientTests(unittest.TestCase):
         for msg_key in msg_keys:
             self.assertIn(msg_key,
                           generated_msg,
-                          f'{msg_key} отсутствует в сообщении')
+                          f'{msg_key} отсутствует в сообщении.')
             if msg_key == USER:
                 for user_key in msg_user_keys:
                     self.assertIn(user_key,
                                   generated_msg[msg_key],
-                                  f'{user_key} отсутствует в {msg_key}')
+                                  f'{user_key} отсутствует в {msg_key}.')
 
     def test_create_msg(self):
         """
@@ -74,7 +83,7 @@ class ClientTests(unittest.TestCase):
         self.assertEqual(generated_msg_user,
                          account_name,
                          f'Вернулось некорректное имя пользователя. '
-                         f'{generated_msg_user} вместо {account_name}')
+                         f'{generated_msg_user} вместо {account_name}.')
 
     def test_msg_ok(self):
         """
@@ -85,7 +94,9 @@ class ClientTests(unittest.TestCase):
         msg_ok = {RESPONSE: 200}
         msg_ok_answer = '200 : OK'
         processed_msg = self.test_client.process_answer(msg_ok)
-        self.assertEqual(processed_msg, msg_ok_answer)
+        self.assertEqual(processed_msg,
+                         msg_ok_answer,
+                         f'Неполучен положительный ответ на корректное сообщение.')
 
     def test_msg_error(self):
         """
@@ -99,7 +110,9 @@ class ClientTests(unittest.TestCase):
         }
         msg_error_answer = f'{msg_error[RESPONSE]} : {msg_error[ERROR]}'
         processed_msg = self.test_client.process_answer(msg_error)
-        self.assertEqual(processed_msg, msg_error_answer)
+        self.assertEqual(processed_msg,
+                         msg_error_answer,
+                         f'Неполучена ошибка на НЕкорректное сообщение.')
 
     def tearDown(self) -> None:
         self.test_client_started.close()
