@@ -1,12 +1,7 @@
-"""
-Создание именованного логгера; +
-Сообщения лога должны иметь следующий формат: "<дата-время> <уровеньважности> <имямодуля> <сообщение>"; +
-Журналирование должно производиться в лог-файл; +
-На стороне сервера необходимо настроить ежедневную ротацию лог-файлов.
-"""
 import logging
 import os
 import sys
+from logging.handlers import TimedRotatingFileHandler
 
 
 # задаем форматирование сообщений
@@ -23,13 +18,17 @@ STREAM_HANDLER.setLevel(logging.ERROR)
 LOG_PATH = os.path.dirname(os.path.abspath(__file__))
 # путь до файла логов
 LOG_PATH = os.path.join(LOG_PATH,
-                        'client_log.txt')
-LOG_FILE = logging.FileHandler(LOG_PATH,
-                               encoding='utf-8')
+                        'server_logs',
+                        'server_log.txt')
+# задаем файловый обработчик логирования, с ротацией 1 день в полночь
+LOG_FILE = logging.handlers.TimedRotatingFileHandler(LOG_PATH,
+                                                     encoding='utf-8',
+                                                     interval=1,
+                                                     when='midnight')
 LOG_FILE.setFormatter(CLIENT_FORMATTER)
 
 # создаем новый экземпляр, т.к. ранее такой логгер не определялся
-LOGGER = logging.getLogger('client')
+LOGGER = logging.getLogger('server')
 LOGGER.addHandler(STREAM_HANDLER)
 LOGGER.addHandler(LOG_FILE)
 LOGGER.setLevel(logging.ERROR)
