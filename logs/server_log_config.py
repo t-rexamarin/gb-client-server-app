@@ -2,7 +2,10 @@ import logging
 import os
 import sys
 from logging.handlers import TimedRotatingFileHandler
+from common.settings import LOGGING_LEVEL
 
+
+LOGGER_NAME = 'server'
 
 # задаем форматирование сообщений
 CLIENT_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
@@ -12,7 +15,7 @@ STREAM_HANDLER = logging.StreamHandler(sys.stderr)
 # подключаем форматирование к обработчику
 STREAM_HANDLER.setFormatter(CLIENT_FORMATTER)
 # события не ниже ошибок (ERROR, CRITICAL)
-STREAM_HANDLER.setLevel(logging.ERROR)
+STREAM_HANDLER.setLevel(LOGGING_LEVEL)
 
 # путь до папки исполняемого файла
 LOG_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -28,10 +31,10 @@ LOG_FILE = logging.handlers.TimedRotatingFileHandler(LOG_PATH,
 LOG_FILE.setFormatter(CLIENT_FORMATTER)
 
 # создаем новый экземпляр, т.к. ранее такой логгер не определялся
-LOGGER = logging.getLogger('server')
+LOGGER = logging.getLogger(LOGGER_NAME)
 LOGGER.addHandler(STREAM_HANDLER)
 LOGGER.addHandler(LOG_FILE)
-LOGGER.setLevel(logging.ERROR)
+LOGGER.setLevel(LOGGING_LEVEL)
 
 
 # отладка

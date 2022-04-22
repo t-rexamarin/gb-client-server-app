@@ -1,5 +1,6 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
+import logging
+
+
 # порт по умолчанию для сетевого взаимодействия
 DEFAULT_PORT = 7777
 # ip адрес по умолчанию для сетевого взаимодействия
@@ -10,6 +11,8 @@ MAX_CONNECTIONS = 5
 MAX_PACKAGE_LENGTH = 1024
 # кодировка проекта
 ENCODING = 'utf-8'
+# уровень логирования
+LOGGING_LEVEL = logging.DEBUG
 
 
 # ACTIONS
