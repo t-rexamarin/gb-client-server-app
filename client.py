@@ -1,19 +1,15 @@
-"""
-Функции клиента:
-    ● сформировать presence-сообщение;
-    ● отправить сообщение серверу;
-    ● получить ответ сервера;
-    ● разобрать сообщение сервера;
-    ● параметры командной строки скрипта client.py <addr> [<port>]:
-        ○ addr — ip-адрес сервера;
-        ○ port — tcp-порт на сервере, по умолчанию 7777.
-"""
 import time
+import logging
 from socket import *
 from common.common import Common, port_check, address_check
 from sys import argv, exit
 from socket import socket
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR
+from logs import client_log_config
+
+
+# инициализация клиентского логгера
+CLIENT_LOGGER = logging.getLogger(client_log_config.LOGGER_NAME)
 
 
 class Client(Common):
@@ -23,10 +19,12 @@ class Client(Common):
 
     def start(self):
         client = socket(AF_INET, SOCK_STREAM)
+        CLIENT_LOGGER.debug('Старт клиента')
         return client
 
     def connect(self, client):
         client_connect = client.connect((self.addr, self.port))
+        CLIENT_LOGGER.debug(f'Клиент коннектится к {self.addr}:{self.port}')
         return client_connect
 
     def create_msg(self, account_name='Guest'):
@@ -37,9 +35,11 @@ class Client(Common):
                 ACCOUNT_NAME: account_name
             }
         }
+        CLIENT_LOGGER.debug(f'Сформировано {PRESENCE} сообщение для {account_name}')
         return msg
 
     def process_answer(self, message):
+        CLIENT_LOGGER.debug(f'Разбор сообщения от сервера: {message}')
         if RESPONSE in message:
             if message[RESPONSE] == 200:
                 return '200 : OK'

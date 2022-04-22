@@ -1,7 +1,13 @@
+import logging
 from socket import *
 from common.common import Common, port_check, address_check
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, MAX_CONNECTIONS
 from sys import argv, exit
+from logs import server_log_config
+
+
+# инициализация серверного логгера
+SERVER_LOGGER = logging.getLogger(server_log_config.LOGGER_NAME)
 
 
 class Server(Common):
@@ -20,6 +26,7 @@ class Server(Common):
         server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # запуск на занятых портах
         server.bind((self.url, self.port))
         server.listen(self.connections)
+        SERVER_LOGGER.debug(f'Запуск сервера на {self.url}:{self.port}')
         return server
 
     def process_client_message(self, message):
@@ -30,6 +37,7 @@ class Server(Common):
         :return:
         :rtype:
         """
+        SERVER_LOGGER.debug(f'Разбор сообщения от клиента: {message}')
         if ACTION in message \
                 and message[ACTION] == PRESENCE \
                 and TIME in message \
@@ -68,9 +76,9 @@ def main():
             response = server.process_client_message(msg_from_client)
             server.send_msg(client, response)
             client.close()
-            print('Сообщенеи клиента успешно обработано.')
+            SERVER_LOGGER.debug('Сообщенеи клиента успешно обработано')
         except ValueError:
-            print('Принято некорректное сообщение от клиента.')
+            SERVER_LOGGER.debug('Принято некорректное сообщение от клиента')
             client.close()
 
 
