@@ -12,6 +12,7 @@ MAX_PACKAGE_LENGTH = 1024
 # кодировка проекта
 ENCODING = 'utf-8'
 # уровень логирования
+# убыванию CRITICAL -> ERROR -> WARNING -> INFO -> DEBUG -> NOTSET
 LOGGING_LEVEL = logging.DEBUG
 
 

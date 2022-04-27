@@ -8,12 +8,12 @@ from common.settings import LOGGING_LEVEL
 LOGGER_NAME = 'server'
 
 # задаем форматирование сообщений
-CLIENT_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
+SERVER_FORMATTER = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
 
 # выводим все в stderr
 STREAM_HANDLER = logging.StreamHandler(sys.stderr)
 # подключаем форматирование к обработчику
-STREAM_HANDLER.setFormatter(CLIENT_FORMATTER)
+STREAM_HANDLER.setFormatter(SERVER_FORMATTER)
 # события не ниже ошибок (ERROR, CRITICAL)
 STREAM_HANDLER.setLevel(LOGGING_LEVEL)
 
@@ -28,7 +28,7 @@ LOG_FILE = logging.handlers.TimedRotatingFileHandler(LOG_PATH,
                                                      encoding='utf-8',
                                                      interval=1,
                                                      when='midnight')
-LOG_FILE.setFormatter(CLIENT_FORMATTER)
+LOG_FILE.setFormatter(SERVER_FORMATTER)
 
 # создаем новый экземпляр, т.к. ранее такой логгер не определялся
 LOGGER = logging.getLogger(LOGGER_NAME)
