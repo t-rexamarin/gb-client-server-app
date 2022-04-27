@@ -1,0 +1,6 @@
+2022-04-27 15:03:57,508 DEBUG decos.py Была вызвана функция __init__ с параметрами (<__main__.Server object at 0x7f3c5a6679b0>, 7777, '127.0.0.1', 5), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:03:57,509 DEBUG server.py Запуск сервера на 127.0.0.1:7777
+2022-04-27 15:03:57,509 DEBUG decos.py Была вызвана функция start с параметрами (<__main__.Server object at 0x7f3c5a6679b0>,), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,200 DEBUG server.py Разбор сообщения от клиента: {'action': 'presence', 'time': 1651061525.1998458, 'user': {'account_name': 'Guest'}}
+2022-04-27 15:12:05,200 DEBUG decos.py Была вызвана функция process_client_message с параметрами (<__main__.Server object at 0x7f3c5a6679b0>, {'action': 'presence', 'time': 1651061525.1998458, 'user': {'account_name': 'Guest'}}), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,201 DEBUG server.py Сообщенеи клиента успешно обработано
