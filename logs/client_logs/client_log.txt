@@ -1,0 +1,16 @@
+2022-04-27 14:42:49,812 DEBUG client.py Старт клиента
+2022-04-27 14:42:49,812 DEBUG decos.py Была вызвана функция start с параметрами (<__main__.Client object at 0x7fdf0b1269e8>,), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 14:42:49,812 DEBUG client.py Клиент коннектится к 127.0.0.1:7777
+2022-04-27 14:42:49,813 DEBUG decos.py Была вызвана функция connect с параметрами (<__main__.Client object at 0x7fdf0b1269e8>, <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 40864), raddr=('127.0.0.1', 7777)>), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 14:42:49,813 DEBUG client.py Сформировано presence сообщение для Guest
+2022-04-27 14:42:49,813 DEBUG decos.py Была вызвана функция create_msg с параметрами (<__main__.Client object at 0x7fdf0b1269e8>,), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 14:42:49,814 DEBUG client.py Разбор сообщения от сервера: {'response': 200}
+2022-04-27 14:42:49,814 DEBUG decos.py Была вызвана функция process_answer с параметрами (<__main__.Client object at 0x7fdf0b1269e8>, {'response': 200}), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,197 DEBUG client.py Старт клиента
+2022-04-27 15:12:05,198 DEBUG decos.py Была вызвана функция start с параметрами (<__main__.Client object at 0x7f593a7df9e8>,), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,199 DEBUG client.py Клиент коннектится к 127.0.0.1:7777
+2022-04-27 15:12:05,199 DEBUG decos.py Была вызвана функция connect с параметрами (<__main__.Client object at 0x7f593a7df9e8>, <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 42072), raddr=('127.0.0.1', 7777)>), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,199 DEBUG client.py Сформировано presence сообщение для Guest
+2022-04-27 15:12:05,200 DEBUG decos.py Была вызвана функция create_msg с параметрами (<__main__.Client object at 0x7f593a7df9e8>,), {}. Вызов из модуля __main__. Вызов из функции main().
+2022-04-27 15:12:05,201 DEBUG client.py Разбор сообщения от сервера: {'response': 200}
+2022-04-27 15:12:05,201 DEBUG decos.py Была вызвана функция process_answer с параметрами (<__main__.Client object at 0x7f593a7df9e8>, {'response': 200}), {}. Вызов из модуля __main__. Вызов из функции main().
