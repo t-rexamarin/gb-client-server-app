@@ -1,6 +1,7 @@
 import logging
 from socket import *
 from common.common import Common, port_check, address_check
+from common.decos import Log
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, MAX_CONNECTIONS
 from sys import argv, exit
 from logs import server_log_config
@@ -11,11 +12,13 @@ SERVER_LOGGER = logging.getLogger(server_log_config.LOGGER_NAME)
 
 
 class Server(Common):
+    @Log()
     def __init__(self, port, url, connections):
         self.port = port
         self.url = url
         self.connections = connections
 
+    @Log()
     def start(self):
         """
         Запуск сервера
@@ -29,6 +32,7 @@ class Server(Common):
         SERVER_LOGGER.debug(f'Запуск сервера на {self.url}:{self.port}')
         return server
 
+    @Log()
     def process_client_message(self, message):
         """
         Обработка клиентского сообщения
