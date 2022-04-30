@@ -16,10 +16,16 @@ ENCODING = 'utf-8'
 LOGGING_LEVEL = logging.DEBUG
 
 
+# MODES
+CLIENT_MODE_SEND = 'send'
+CLIENT_MODE_LISTEN = 'listen'
+DEFAULT_CLIENT_MODE = CLIENT_MODE_LISTEN
+
+
 # ACTIONS
 PRESENCE = 'presence'
 PROBE = 'probe'
-MSG = 'msg'
+MESSAGE = 'message'
 QUIT = 'quit'
 AUTHENTICATE = 'authenticate'
 JOIN = 'join'
@@ -33,3 +39,4 @@ ERROR = 'error'
 TIME = 'time'
 USER = 'user'
 ACCOUNT_NAME = 'account_name'
+MESSAGE_TEXT = 'message_text'
