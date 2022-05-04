@@ -135,6 +135,7 @@ def main():
                 client.send_msg(client_running, msg_to_server)
             except (ConnectionResetError, ConnectionError, ConnectionAbortedError):
                 CLIENT_LOGGER.error(f'Соединение с сервером {server_address} было потеряно.')
+                exit(1)
             # try:
             #     answer = client.process_answer(client.get_msg(client_running))
             #     # print(answer)
@@ -148,6 +149,7 @@ def main():
                 client.process_server_message(client.get_msg(client_running))
             except (ConnectionResetError, ConnectionError, ConnectionAbortedError):
                 CLIENT_LOGGER.error(f'Соединение с сервером {server_address} было потеряно.')
+                exit(1)
 
 
 if __name__ == '__main__':
