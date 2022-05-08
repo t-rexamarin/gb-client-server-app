@@ -145,14 +145,17 @@ def main():
         # кладём в словарь, если ошибка, исключаем клиента
         if recv_data_lst:
             for client_with_message in recv_data_lst:
-                try:
-                    server.process_client_message(server.get_msg(client_with_message),
-                                                  messages,
-                                                  client_with_message)
-                except:
-                    SERVER_LOGGER.info(f'Клиент {client_with_message.getpeername()} '
-                                       f'отключился от сервера.')
-                    clients.remove(client_with_message)
+                processed_message = server.get_msg(client_with_message)
+                # проверка если сериализованные байты не пустые
+                if processed_message:
+                    try:
+                        server.process_client_message(processed_message,
+                                                      messages,
+                                                      client_with_message)
+                    except:
+                        SERVER_LOGGER.info(f'Клиент {client_with_message.getpeername()} '
+                                           f'отключился от сервера.')
+                        clients.remove(client_with_message)
 
         # если есть сообщения для отправки и ожидающие клиенты, отправляем им сообщение
         if messages and send_data_lst:

@@ -15,10 +15,14 @@ class Common:
         msg = message.recv(MAX_PACKAGE_LENGTH)  # Принять не более MAX_PACKAGE_LENGTH байтов данных
         if isinstance(msg, bytes):
             json_response = msg.decode(ENCODING)
-            response = json.loads(json_response)
-            if isinstance(response, dict):
-                return response
-            raise ValueError('Объект не является словарем')
+            if len(json_response) != 0:
+                response = json.loads(json_response)
+                if isinstance(response, dict):
+                    return response
+                raise ValueError('Объект не является словарем')
+            else:
+                return
+            # raise ValueError('Пришла пустая строка')
         raise ValueError('Пришли не байты')
 
     def send_msg(self, socket_, message):
