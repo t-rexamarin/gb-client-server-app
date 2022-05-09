@@ -7,7 +7,7 @@ from common.common import Common, port_check
 # from common.common import address_check
 from common.decos import Log
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, MAX_CONNECTIONS, \
-    DEFAULT_IP_ADDRESS, DEFAULT_PORT, MESSAGE, MESSAGE_TEXT
+    DEFAULT_IP_ADDRESS, DEFAULT_PORT, MESSAGE, MESSAGE_TEXT, RESPONSE_200, RESPONSE_400, EXIT, RECEIVER, SENDER
 from sys import argv, exit
 from logs import server_log_config
 
@@ -39,7 +39,7 @@ class Server(Common):
         return server
 
     @Log()
-    def process_client_message(self, message, messages_list, client):
+    def process_client_message(self, message, messages_list, client, clients, names):
         """
         Обработка клиентского сообщения
         :param message:
@@ -57,16 +57,31 @@ class Server(Common):
                 and message[ACTION] == PRESENCE \
                 and TIME in message \
                 and USER in message \
-                and message[USER][ACCOUNT_NAME] == 'Guest':
-            # return {RESPONSE: 200}
-            self.send_msg(client, {RESPONSE: 200})
+                and USER in message:
+            # Если такой пользователь ещё не зарегистрирован,
+            # регистрируем, иначе отправляем ответ и завершаем соединение.
+            if message[USER][ACCOUNT_NAME] not in names.keys():
+                names[message[USER][ACCOUNT_NAME]] = client
+                self.send_msg(client, RESPONSE_200)
+            else:
+                response = RESPONSE_400
+                response[ERROR] = 'Имя пользователя уже занято.'
+                self.send_msg(client, response)
+                clients.remove(client)
+                client.close()
             return
         # Если это сообщение, то добавляем его в очередь сообщений. Ответ не требуется.
         elif ACTION in message \
                 and message[ACTION] == MESSAGE \
                 and TIME in message \
                 and MESSAGE_TEXT in message:
-            messages_list.append((message[USER][ACCOUNT_NAME], message[MESSAGE_TEXT]))
+            messages_list.append(message)
+            return
+        elif ACTION in message and message[ACTION] == EXIT and \
+            ACCOUNT_NAME in message:
+            clients.remove(names[message[ACCOUNT_NAME]])
+            names[message[ACCOUNT_NAME]].close()
+            del names[message[ACCOUNT_NAME]]
             return
         # Иначе отдаём Bad request
         else:
@@ -75,6 +90,25 @@ class Server(Common):
                 ERROR: 'Bad request'
             })
         return
+
+    @Log()
+    def process_message(self, message, names, listen_socks):
+        """
+        Функция адресной отправки сообщения определённому клиенту. Принимает словарь сообщение,
+        список зарегистрированых пользователей и слушающие сокеты. Ничего не возвращает.
+        """
+        if message[RECEIVER] in names \
+            and names[message[RECEIVER]] in listen_socks:
+                self.send_msg(names[message[RECEIVER]], message)
+                SERVER_LOGGER.info(f'Отправлено сообщение пользователю {message[RECEIVER]} '
+                    f'от пользователя {message[SENDER]}.')
+        elif message[RECEIVER] in names \
+            and names[message[RECEIVER]] not in listen_socks:
+                raise ConnectionError
+        else:
+            SERVER_LOGGER.error(
+                f'Пользователь {message[RECEIVER]} не зарегистрирован на сервере, '
+                f'отправка сообщения невозможна.')
 
 
 def arg_parser(args):
@@ -117,6 +151,9 @@ def main():
     clients = []
     messages = []
 
+    # Словарь, содержащий имена пользователей и соответствующие им сокеты.
+    names = dict()
+
     # работа сервера
     while True:
         try:
@@ -133,6 +170,7 @@ def main():
         send_data_lst = []
         err_lst = []
 
+        # Проверяем на наличие ждущих клиентов
         try:
             if clients:
                 # select(на чтение, на запись, ошибки)
@@ -151,27 +189,25 @@ def main():
                     try:
                         server.process_client_message(processed_message,
                                                       messages,
-                                                      client_with_message)
-                    except:
+                                                      client_with_message,
+                                                      clients,
+                                                      names)
+                    except Exception as e:
+                        print(e)
                         SERVER_LOGGER.info(f'Клиент {client_with_message.getpeername()} '
                                            f'отключился от сервера.')
                         clients.remove(client_with_message)
 
         # если есть сообщения для отправки и ожидающие клиенты, отправляем им сообщение
-        if messages and send_data_lst:
-            message = {
-                ACTION: MESSAGE,
-                USER: messages[0][0],
-                TIME: time.time(),
-                MESSAGE_TEXT: messages[0][1]
-            }
-            del messages[0]
-            for waiting_client in send_data_lst:
-                try:
-                    server.send_msg(waiting_client, message)
-                except:
-                    SERVER_LOGGER.info(f'Клиент {waiting_client.getpeername()} отключился от сервера.')
-                    clients.remove(waiting_client)
+        for i in messages:
+            try:
+                server.process_message(i, names, send_data_lst)
+            except Exception as e:
+                print(e)
+                SERVER_LOGGER.info(f'Связь с клиентом с именем {i[RECEIVER]} была потеряна')
+                clients.remove(names[i[RECEIVER]])
+                del names[i[RECEIVER]]
+        messages.clear()
 
 
 if __name__ == '__main__':

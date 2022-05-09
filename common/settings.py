@@ -13,7 +13,7 @@ MAX_PACKAGE_LENGTH = 1024
 ENCODING = 'utf-8'
 # уровень логирования
 # убыванию CRITICAL -> ERROR -> WARNING -> INFO -> DEBUG -> NOTSET
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.NOTSET
 
 
 # MODES
@@ -30,6 +30,7 @@ QUIT = 'quit'
 AUTHENTICATE = 'authenticate'
 JOIN = 'join'
 LEAVE = 'leave'
+EXIT = 'exit'
 
 
 # MSG_KEYS
@@ -38,5 +39,16 @@ RESPONSE = 'response'
 ERROR = 'error'
 TIME = 'time'
 USER = 'user'
+SENDER = 'from'
+RECEIVER = 'to'
 ACCOUNT_NAME = 'account_name'
 MESSAGE_TEXT = 'message_text'
+
+# Словари - ответы:
+# 200
+RESPONSE_200 = {RESPONSE: 200}
+# 400
+RESPONSE_400 = {
+    RESPONSE: 400,
+    ERROR: None
+}
