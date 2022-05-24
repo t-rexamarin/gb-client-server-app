@@ -17,7 +17,6 @@ while True:
                                         shell=True,
                                         stdout=subprocess.PIPE,
                                         preexec_fn=os.setsid))
-        sleep(1)
 
         while True:
             CLIENTS = input('Сколько клиентов запустить?: ')

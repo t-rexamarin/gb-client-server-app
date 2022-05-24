@@ -36,6 +36,7 @@ EXIT = 'exit'
 # MSG_KEYS
 ACTION = 'action'
 RESPONSE = 'response'
+EXIT = 'exit'
 ERROR = 'error'
 TIME = 'time'
 USER = 'user'

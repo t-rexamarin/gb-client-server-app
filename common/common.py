@@ -51,18 +51,3 @@ def port_check(port):
         exit(1)
     else:
         return port
-
-
-# deprecated
-# def address_check(args):
-#     # адрес
-#     try:
-#         if '-a' in args:
-#             listen_address = args[args.index('-a') + 1]
-#         else:
-#             listen_address = DEFAULT_IP_ADDRESS
-#     except IndexError:
-#         print('После параметра "-a" обходимо указать адрес, который будет слушать сервер')
-#         exit(1)
-#     else:
-#         return listen_address
