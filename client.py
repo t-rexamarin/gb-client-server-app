@@ -64,7 +64,8 @@ class ClientSender(threading.Thread, Common, metaclass=ClientVerifier):
             CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
             exit(1)
 
-    def user_interface(self):
+    # def user_interface(self):
+    def run(self):
         """Функция взаимодействия с пользователем, запрашивает команды, отправляет сообщения"""
         self.print_help()
         while True:
@@ -97,7 +98,7 @@ class ClientReader(threading.Thread, Common, metaclass=ClientVerifier):
         self.sock = sock
         super().__init__()
 
-    def process_server_message(self):
+    def run(self):
         """
         Получение сообщений пришедших с сервера
         """
