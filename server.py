@@ -59,7 +59,7 @@ class Server(Common, metaclass=ServerVerifier):
         self.server = transport
         SERVER_LOGGER.debug(f'Запуск сервера на {self.url}:{self.port}')
 
-    def main_loop(self):
+    def run(self):
         """
         Основной цикл программы сервера
         :return:
