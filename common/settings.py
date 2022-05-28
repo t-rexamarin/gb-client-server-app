@@ -13,7 +13,7 @@ MAX_PACKAGE_LENGTH = 1024
 ENCODING = 'utf-8'
 # уровень логирования
 # убыванию CRITICAL -> ERROR -> WARNING -> INFO -> DEBUG -> NOTSET
-LOGGING_LEVEL = logging.NOTSET
+LOGGING_LEVEL = logging.ERROR
 
 
 # MODES

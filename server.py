@@ -1,6 +1,7 @@
 import argparse
 import logging
 import select
+import threading
 import time
 from socket import *
 from common.common import Common, port_check
@@ -13,10 +14,12 @@ from logs import server_log_config
 from meta_classes import ServerVerifier
 
 # инициализация серверного логгера
+from server_db import ServerStorage
 
 SERVER_LOGGER = logging.getLogger(server_log_config.LOGGER_NAME)
 
 
+# descriptor
 class Port:
     def __set_name__(self, owner, name):
         # owner - <class '__main__.Server'>
@@ -34,18 +37,25 @@ class Port:
             raise TypeError(f'Порт должен быть числом, передано {type(value)}')
 
 
-class Server(Common, metaclass=ServerVerifier):
+class Server(threading.Thread, Common, metaclass=ServerVerifier):
     port = Port()
 
-    def __init__(self, port, url, connections):
+    def __init__(self, port, url, database):
+        # Параментры подключения
         self.port = port
         self.url = url
-        self.connections = connections
+        self.database = database
+
+        # Список подключённых клиентов
         self.clients = []
+        # Список сообщений на отправку
         self.messages = []
+        # Словарь содержащий сопоставленные имена и соответствующие им сокеты
         self.names = dict()
 
-    def start(self):
+        super().__init__()
+
+    def server_init(self):
         """
         Запуск сервера
         :return:
@@ -55,7 +65,7 @@ class Server(Common, metaclass=ServerVerifier):
         transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)  # запуск на занятых портах
         transport.bind((self.url, self.port))
         transport.settimeout(0.5)
-        transport.listen(self.connections)
+        transport.listen()
         self.server = transport
         SERVER_LOGGER.debug(f'Запуск сервера на {self.url}:{self.port}')
 
@@ -65,7 +75,7 @@ class Server(Common, metaclass=ServerVerifier):
         :return:
         :rtype:
         """
-        self.start()
+        self.server_init()
 
         while True:
             try:
@@ -136,12 +146,14 @@ class Server(Common, metaclass=ServerVerifier):
         if ACTION in message \
                 and message[ACTION] == PRESENCE \
                 and TIME in message \
-                and USER in message \
                 and USER in message:
             # Если такой пользователь ещё не зарегистрирован,
             # регистрируем, иначе отправляем ответ и завершаем соединение.
-            if message[USER][ACCOUNT_NAME] not in self.names.keys():
-                self.names[message[USER][ACCOUNT_NAME]] = client
+            account_name = message[USER][ACCOUNT_NAME]
+            if account_name not in self.names.keys():
+                self.names[account_name] = client
+                client_ip, client_port = client.getpeername()
+                self.database.user_login(account_name, client_ip, client_port)
                 self.send_msg(client, RESPONSE_200)
             else:
                 response = RESPONSE_400
@@ -157,8 +169,10 @@ class Server(Common, metaclass=ServerVerifier):
                 and MESSAGE_TEXT in message:
             self.messages.append(message)
             return
+        # Если клиент выходит
         elif ACTION in message and message[ACTION] == EXIT and \
                 ACCOUNT_NAME in message:
+            self.database.user_logout(message[ACCOUNT_NAME])
             self.clients.remove(self.names[message[ACCOUNT_NAME]])
             self.names[message[ACCOUNT_NAME]].close()
             del self.names[message[ACCOUNT_NAME]]
@@ -169,7 +183,7 @@ class Server(Common, metaclass=ServerVerifier):
                 RESPONSE: 400,
                 ERROR: 'Bad request'
             })
-        return
+            return
 
     @Log()
     def process_message(self, message, listen_socks):
@@ -189,6 +203,16 @@ class Server(Common, metaclass=ServerVerifier):
             SERVER_LOGGER.error(
                 f'Пользователь {message[RECEIVER]} не зарегистрирован на сервере, '
                 f'отправка сообщения невозможна.')
+
+
+def print_help():
+    print(
+    """Поддерживаемые комманды:\n
+    users - список известных пользователей\n
+    connected - список подключенных пользователей\n
+    loghist - история входов пользователя\n
+    exit - завершение работы сервера\n
+    help - вывод справки по поддерживаемым командам\n""")
 
 
 def arg_parser(args):
@@ -213,8 +237,35 @@ def main():
     """
     server_address, server_port = arg_parser(argv)
 
-    server = Server(server_port, server_address, 5)
-    server.main_loop()
+    database = ServerStorage()
+
+    server = Server(server_port, server_address, database)
+    server.daemon = True
+    server.start()
+
+    print(f'Сервер запущен на {server_address}:{server_port}')
+    print_help()
+
+    while True:
+        command = input('Введите команду: ')
+        if command == 'exit':
+            break
+        elif command == 'users':
+            # вывод всех известных пользователей
+            for user in sorted(database.users_list()):
+                print(f'Пользователь {user[0]}, последний вход: {user[1]}')
+        elif command == 'connected':
+            # вывод активныйх пользователей
+            for user in sorted(database.active_users_list()):
+                print(f'Пользователь {user[0]}, подключен: {user[1]}:{user[2]}, время установки соединения: {user[3]}')
+        elif command == 'loghist':
+            name = input('Введите имя пользователя для просмотра истории. '
+                         'Для вывода всей истории, просто нажмите Enter: ')
+            # если имя пустое, вернет всех
+            for user in sorted(database.login_history(name)):
+                print(f'Пользователь: {user[0]} время входа: {user[1]}. Вход с: {user[2]}:{user[3]}')
+        else:
+            print('Команда не распознана.')
 
 
 if __name__ == '__main__':

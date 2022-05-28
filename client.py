@@ -138,7 +138,8 @@ def process_answer(message):
     if RESPONSE in message:
         if message[RESPONSE] == 200:
             return '200 : OK'
-        return f'{message[RESPONSE]} : {message[ERROR]}'
+        elif message[RESPONSE] == 400:
+            raise ERROR(f'400 : {message[ERROR]}')
     raise ValueError
 
 

@@ -21,8 +21,8 @@ class Common:
                     return response
                 raise ValueError('Объект не является словарем')
             else:
-                return
-            # raise ValueError('Пришла пустая строка')
+                # return
+                raise ValueError('Пришла пустая строка')
         raise ValueError('Пришли не байты')
 
     def send_msg(self, socket_, message):
