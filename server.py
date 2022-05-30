@@ -1,5 +1,7 @@
 import argparse
+import configparser
 import logging
+import os
 import select
 import threading
 import time
@@ -8,7 +10,8 @@ from common.common import Common, port_check
 # from common.common import address_check
 from common.decos import Log
 from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, MAX_CONNECTIONS, \
-    DEFAULT_IP_ADDRESS, DEFAULT_PORT, MESSAGE, MESSAGE_TEXT, RESPONSE_200, RESPONSE_400, EXIT, RECEIVER, SENDER
+    DEFAULT_IP_ADDRESS, DEFAULT_PORT, MESSAGE, MESSAGE_TEXT, RESPONSE_200, RESPONSE_400, EXIT, RECEIVER, SENDER, \
+    GET_CONTACTS, RESPONSE_202, LIST_INFO, ADD_CONTACT, USERS_REQUEST, REMOVE_CONTACT
 from sys import argv, exit
 from logs import server_log_config
 from meta_classes import ServerVerifier
@@ -117,6 +120,13 @@ class Server(threading.Thread, Common, metaclass=ServerVerifier):
                             print(e)
                             SERVER_LOGGER.info(f'Клиент {client_with_message.getpeername()} '
                                                f'отключился от сервера.')
+                            # когда клиент отключился, разлогиниваем его
+                            # удаляя из таблицы активных юзеров
+                            for name in self.names:
+                                if self.names[name] == client_with_message:
+                                    self.database.user_logout(name)
+                                    del self.names[name]
+                                    break
                             self.clients.remove(client_with_message)
 
             # если есть сообщения для отправки и ожидающие клиенты, отправляем им сообщение
@@ -127,6 +137,9 @@ class Server(threading.Thread, Common, metaclass=ServerVerifier):
                     print(e)
                     SERVER_LOGGER.info(f'Связь с клиентом с именем {msg[RECEIVER]} была потеряна')
                     self.clients.remove(self.names[msg[RECEIVER]])
+                    # если была ошибка при обработке сообщения, то так же удалить юзера
+                    # из таблицы активных
+                    self.database.user_logout(msg[RECEIVER])
                     del self.names[msg[RECEIVER]]
             self.messages.clear()
 
@@ -165,18 +178,55 @@ class Server(threading.Thread, Common, metaclass=ServerVerifier):
         # Если это сообщение, то добавляем его в очередь сообщений. Ответ не требуется.
         elif ACTION in message \
                 and message[ACTION] == MESSAGE \
+                and RECEIVER in message \
+                and SENDER in message \
                 and TIME in message \
-                and MESSAGE_TEXT in message:
+                and MESSAGE_TEXT in message \
+                and self.names[message[SENDER]] == client:
             self.messages.append(message)
+            self.database.process_message(message[SENDER], message[RECEIVER])
             return
         # Если клиент выходит
         elif ACTION in message and message[ACTION] == EXIT and \
-                ACCOUNT_NAME in message:
+                ACCOUNT_NAME in message \
+                and self.names[message[ACCOUNT_NAME]] == client:
             self.database.user_logout(message[ACCOUNT_NAME])
             self.clients.remove(self.names[message[ACCOUNT_NAME]])
             self.names[message[ACCOUNT_NAME]].close()
             del self.names[message[ACCOUNT_NAME]]
             return
+        # Если запрос листа конактов
+        elif ACTION in message \
+                and message[ACTION] == GET_CONTACTS \
+                and USER in message \
+                and self.names[message[USER]] == client:
+            response = RESPONSE_202
+            response[LIST_INFO] = self.database.get_contacs(message[USER])
+            self.send_msg(client, response)
+        # Если добавление контакта
+        elif ACTION in message \
+                and message[ACTION] == ADD_CONTACT \
+                and ACCOUNT_NAME in message \
+                and USER in message \
+                and self.names[message[USER]] == client:
+            self.database.add_contact(message[USER], message[ACCOUNT_NAME])
+            self.send_msg(client, RESPONSE_200)
+        # Если это удаление контакта
+        elif ACTION in message \
+                and message[ACTION] == REMOVE_CONTACT \
+                and ACCOUNT_NAME in message \
+                and USER in message \
+                and self.names[message[USER]] == client:
+            self.database.remove_contact(message[USER], message[ACCOUNT_NAME])
+            self.send_msg(client, RESPONSE_200)
+        # Если это запрос известных пользователей
+        elif ACTION in message \
+                and message[ACTION] == USERS_REQUEST \
+                and ACCOUNT_NAME in message \
+                and self.names[message[ACCOUNT_NAME]] == client:
+            response = RESPONSE_202
+            response[LIST_INFO] = [user[0] for user in self.database.users_list()]
+            self.send_msg(client, response)
         # Иначе отдаём Bad request
         else:
             self.send_msg(client, {
@@ -215,7 +265,7 @@ def print_help():
     help - вывод справки по поддерживаемым командам\n""")
 
 
-def arg_parser(args):
+def arg_parser(default_address, default_port):
     """
     Парсер параметром с которыми был запущен сервер
     :return:
@@ -223,9 +273,9 @@ def arg_parser(args):
     """
     # nargs='?' - 0 или 1 аргумент
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', default=DEFAULT_IP_ADDRESS, nargs='?')
-    parser.add_argument('-p', default=DEFAULT_PORT, nargs='?')
-    namespace = parser.parse_args(args[1:])  # т.к. 0 имя скрипта
+    parser.add_argument('-a', default=default_address, nargs='?')
+    parser.add_argument('-p', default=default_port, nargs='?')
+    namespace = parser.parse_args(argv[1:])  # т.к. 0 имя скрипта
     server_address = namespace.a
     server_port = namespace.p
     return server_address, server_port
@@ -235,9 +285,17 @@ def main():
     """
     server.py -p 8889 -a 127.0.0.2
     """
-    server_address, server_port = arg_parser(argv)
+    # загрузка конфигурации сервера
+    config = configparser.ConfigParser()
+    dir_path = os.path.dirname(os.path.realpath(__file__))  # директория исполняемого файла
+    config.read(f'{dir_path}/server.ini')
 
-    database = ServerStorage()
+    # параметры для запуска сервера
+    server_address, server_port = arg_parser(config['SETTINGS']['listen_address'],
+                                             config['SETTINGS']['default_port'])
+    # параметры для запуска бд
+    database = ServerStorage(os.path.join(config['SETTINGS']['database_path'],
+                                          config['SETTINGS']['database_file']))
 
     server = Server(server_port, server_address, database)
     server.daemon = True

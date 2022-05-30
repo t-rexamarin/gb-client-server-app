@@ -44,10 +44,20 @@ SENDER = 'from'
 RECEIVER = 'to'
 ACCOUNT_NAME = 'account_name'
 MESSAGE_TEXT = 'message_text'
+GET_CONTACTS = 'get_contacts'
+LIST_INFO = 'data_list'
+ADD_CONTACT = 'add'
+REMOVE_CONTACT = 'remove'
+USERS_REQUEST = 'get_users'
 
 # Словари - ответы:
 # 200
 RESPONSE_200 = {RESPONSE: 200}
+# 202
+RESPONSE_202 = {
+    RESPONSE: 202,
+    LIST_INFO: None
+}
 # 400
 RESPONSE_400 = {
     RESPONSE: 400,
