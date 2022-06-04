@@ -169,7 +169,7 @@ def main():
 
     # запуск сокета
     # проверки порта
-    server_port = port_check(server_port)
+    # server_port = port_check(server_port)
 
     # Если имя пользователя не было задано, необходимо запросить пользователя.
     if not client_name:
