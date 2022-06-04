@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from common.settings import *
 from common.common import send_msg, get_msg
 from logs import client_log_config
+from meta_classes import ClientVerifier
 
 sys.path.append('../')
 
@@ -17,6 +18,7 @@ CLIENT_LOGGER = logging.getLogger(client_log_config.LOGGER_NAME)
 socket_lock = threading.Lock()
 
 
+# class ClientTransport(threading.Thread, QObject, metaclass=ClientVerifier):
 class ClientTransport(threading.Thread, QObject):
     # сигнал нового сообщения
     new_message = pyqtSignal(str)

@@ -1,5 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QPushButton, QLineEdit, QApplication, QLabel , qApp
-from PyQt5.QtCore import QEvent
+from PyQt5.QtWidgets import QDialog, QPushButton, QLineEdit, QApplication, QLabel, qApp
 
 
 # Стартовый диалог с выбором имени пользователя
@@ -10,22 +9,22 @@ class UserNameDialog(QDialog):
         self.ok_pressed = False
 
         self.setWindowTitle('Привет!')
-        self.setFixedSize(220, 120)
+        self.setFixedSize(210, 100)
 
         self.label = QLabel('Введите имя пользователя:', self)
         self.label.move(5, 10)
         self.label.setFixedSize(205, 20)
 
         self.client_name = QLineEdit(self)
-        self.client_name.setFixedSize(205, 20)
+        self.client_name.setFixedSize(200, 20)
         self.client_name.move(5, 30)
 
         self.btn_ok = QPushButton('Начать', self)
-        self.btn_ok.move(5, 60)
+        self.btn_ok.move(15, 60)
         self.btn_ok.clicked.connect(self.click)
 
         self.btn_cancel = QPushButton('Выход', self)
-        self.btn_cancel.move(90, 60)
+        self.btn_cancel.move(115, 60)
         self.btn_cancel.clicked.connect(qApp.exit)
 
         self.show()
