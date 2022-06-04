@@ -121,26 +121,26 @@ class ClientReader(threading.Thread, Common, metaclass=ClientVerifier):
                 break
 
 
-def create_presence(account_name):
-    msg = {
-        ACTION: PRESENCE,
-        TIME: time.time(),
-        USER: {
-            ACCOUNT_NAME: account_name
-        }
-    }
-    CLIENT_LOGGER.debug(f'Сформировано {PRESENCE} сообщение для {account_name}')
-    return msg
+# def create_presence(account_name):
+#     msg = {
+#         ACTION: PRESENCE,
+#         TIME: time.time(),
+#         USER: {
+#             ACCOUNT_NAME: account_name
+#         }
+#     }
+#     CLIENT_LOGGER.debug(f'Сформировано {PRESENCE} сообщение для {account_name}')
+#     return msg
 
 
-def process_answer(message):
-    CLIENT_LOGGER.debug(f'Разбор сообщения от сервера: {message}')
-    if RESPONSE in message:
-        if message[RESPONSE] == 200:
-            return '200 : OK'
-        elif message[RESPONSE] == 400:
-            raise ERROR(f'400 : {message[ERROR]}')
-    raise ValueError
+# def process_answer(message):
+#     CLIENT_LOGGER.debug(f'Разбор сообщения от сервера: {message}')
+#     if RESPONSE in message:
+#         if message[RESPONSE] == 200:
+#             return '200 : OK'
+#         elif message[RESPONSE] == 400:
+#             raise ERROR(f'400 : {message[ERROR]}')
+#     raise ValueError
 
 
 def arg_parser(args):
