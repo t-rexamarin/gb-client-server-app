@@ -37,15 +37,15 @@ class ClientTransport(threading.Thread, QObject):
         # обновляем таблицы известных пользователей и контактов
         try:
             self.user_list_update()
-            self.contact_list_update()
+            self.contacts_list_update()
         except OSError as err:
             if err.errno:
-                CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
-                raise ERROR('Потеряно соединение с сервером.')
+                CLIENT_LOGGER.critical('Потеряно соединение с сервером в __init__.')
+                raise ERROR('Потеряно соединение с сервером в __init__.')
             CLIENT_LOGGER.error('Timeout соединения при обновлении списков пользователей.')
         except json.JSONDecodeError:
-            CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
-            raise ERROR('Потеряно соединение с сервером.')
+            CLIENT_LOGGER.critical('Потеряно соединение с сервером в __init__.')
+            raise ERROR('Потеряно соединение с сервером в __init__.')
         # finally:
         self.running = True  # флаг продолжения работы
 
@@ -89,8 +89,8 @@ class ClientTransport(threading.Thread, QObject):
                 send_msg(self.transport, self.create_presence())
                 self.process_answer(get_msg(self.transport))
         except (OSError, json.JSONDecodeError):
-            CLIENT_LOGGER.critical('Потеряно соединение с сервером!')
-            raise ERROR('Потеряно соединение с сервером!')
+            CLIENT_LOGGER.critical('Потеряно соединение с сервером в connection_init!')
+            raise ERROR('Потеряно соединение с сервером в connection_init!')
         else:
             CLIENT_LOGGER.info('Соединение с сервером успешно установлено.')
 
@@ -147,7 +147,7 @@ class ClientTransport(threading.Thread, QObject):
             TIME: time.time(),
             USER: self.username
         }
-        CLIENT_LOGGER.debug(f'Сформирован запрос {req}')
+        CLIENT_LOGGER.debug(f'Сформирован запрос {request}')
 
         with socket_lock:
             send_msg(self.transport, request)

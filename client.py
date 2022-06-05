@@ -65,15 +65,15 @@ def main():
         f'Запущен клиент с парамертами: адрес сервера: {server_address}, '
         f'порт: {server_port}, имя пользователя: {client_name}')
 
-    database = ClientDatabase()
+    database = ClientDatabase(client_name)
 
     try:
         transport = ClientTransport(server_port,
                                     server_address,
                                     database,
                                     client_name)
-    except ERROR as err:
-        print(err.text)
+    except Exception as err:
+        print(err)
         exit(1)
     else:
         transport.setDaemon(True)

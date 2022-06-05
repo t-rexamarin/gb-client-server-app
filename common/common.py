@@ -1,5 +1,7 @@
 import json
 from sys import exit
+
+from .decos import Log
 from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADDRESS, DEFAULT_CLIENT_MODE
 
 
@@ -39,28 +41,24 @@ from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADD
 #         encoded_message = serialised_message.encode(ENCODING)
 #         socket_.send(encoded_message)
 
-def get_msg(message):
+def get_msg(client):
     """
     Прием и декодирование сообщения
-    :param message:
-    :type message:
+    :param client:
+    :type client:
     :return:
     :rtype:
     """
-    msg = message.recv(MAX_PACKAGE_LENGTH)  # Принять не более MAX_PACKAGE_LENGTH байтов данных
-    if isinstance(msg, bytes):
-        json_response = msg.decode(ENCODING)
-        if len(json_response) != 0:
-            response = json.loads(json_response)
-            if isinstance(response, dict):
-                return response
-            raise ValueError('Объект не является словарем')
-        else:
-            # return
-            raise ValueError('Пришла пустая строка')
-    raise ValueError('Пришли не байты')
+    encoded_response = client.recv(MAX_PACKAGE_LENGTH)
+    json_response = encoded_response.decode(ENCODING)
+    response = json.loads(json_response)
+    if isinstance(response, dict):
+        return response
+    else:
+        raise TypeError
 
 
+@Log()
 def send_msg(socket_, message):
     """
     Кодирование и отправка сообщения
