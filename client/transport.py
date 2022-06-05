@@ -213,7 +213,7 @@ class ClientTransport(threading.Thread, QObject):
         CLIENT_LOGGER.debug(f'Удаление контакта {contact}')
 
         request = {
-            ACTION: EXIT,
+            ACTION: REMOVE_CONTACT,
             TIME: time.time(),
             USER: self.username,
             ACCOUNT_NAME: contact
@@ -261,7 +261,7 @@ class ClientTransport(threading.Thread, QObject):
         # Необходимо дождаться освобождения сокета для отправки сообщения
         with socket_lock:
             send_msg(self.transport, message_dict)
-            self.process_server_ans(get_msg(self.transport))
+            self.process_answer(get_msg(self.transport))
             CLIENT_LOGGER.info(f'Отправлено сообщение для пользователя {to}')
 
     def run(self):
@@ -286,6 +286,6 @@ class ClientTransport(threading.Thread, QObject):
                     self.connection_lost.emit()
                 else:
                     CLIENT_LOGGER.debug(f'Принято сообщение с сервера: {message}')
-                    self.process_server_ans(message)
+                    self.process_answer(message)
                 finally:
                     self.transport.settimeout(5)

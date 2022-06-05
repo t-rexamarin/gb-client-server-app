@@ -210,7 +210,7 @@ class Server(threading.Thread, metaclass=ServerVerifier):
                 and USER in message \
                 and self.names[message[USER]] == client:
             response = RESPONSE_202
-            response[LIST_INFO] = self.database.get_contacs(message[USER])
+            response[LIST_INFO] = self.database.get_contacts(message[USER])
             send_msg(client, response)
         # Если добавление контакта
         elif ACTION in message \

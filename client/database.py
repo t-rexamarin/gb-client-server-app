@@ -89,7 +89,7 @@ class ClientDatabase:
             self.session.add(contact_row)
             self.session.commit()
 
-    def delete_contact(self, contact):
+    def del_contact(self, contact):
         """
         Удаление контакта
         :param contact:
