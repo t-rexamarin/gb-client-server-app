@@ -13,10 +13,10 @@ class ClientDatabase:
 
     class MessageHistory:
         """Отображение таблицы истории сообщений"""
-        def __init__(self, from_user, to_user, message):
+        def __init__(self, contact, direction, message):
             self.id = None
-            self.from_user = from_user
-            self.to_user = to_user
+            self.contact = contact
+            self.direction = direction
             self.message = message
             self.date = datetime.datetime.now()
 
@@ -48,8 +48,8 @@ class ClientDatabase:
         # таблица истории сообщений
         history_table = Table('messages_history', self.metadata,
                               Column('id', Integer, primary_key=True),
-                              Column('from_user', String),
-                              Column('to_user', String),
+                              Column('contact', String),
+                              Column('direction', String),
                               Column('message', Text),
                               Column('date', DateTime))
 
@@ -115,19 +115,19 @@ class ClientDatabase:
             self.session.add(user_row)
         self.session.commit()
 
-    def save_message(self, from_user, to_user, message):
+    def save_message(self, contact, direction, message):
         """
         Сохранение сообщения
-        :param from_user:
-        :type from_user:
-        :param to_user:
-        :type to_user:
+        :param contact:
+        :type contact:
+        :param direction:
+        :type direction:
         :param message:
         :type message:
         :return:
         :rtype:
         """
-        message_row = self.MessageHistory(from_user, to_user, message)
+        message_row = self.MessageHistory(contact, direction, message)
         self.session.add(message_row)
         self.session.commit()
 
@@ -177,13 +177,16 @@ class ClientDatabase:
         else:
             return False
 
-    def get_history(self, from_who=None, to_who=None):
-        query = self.session.query(self.MessageHistory)
-        if from_who:
-            query = query.filter_by(from_user=from_who)
-        if to_who:
-            query = query.filter_by(to_user=to_who)
-        result = [(history_row.from_user, history_row.to_user, history_row.message, history_row.date)
+    def get_history(self, contact):
+        """
+        Возвращает историю переписки
+        :param contact:
+        :type contact:
+        :return:
+        :rtype:
+        """
+        query = self.session.query(self.MessageHistory).filter_by(contact=contact)
+        result = [(history_row.contact, history_row.direction, history_row.message, history_row.date)
                   for history_row in query.all()]
         return result
 
