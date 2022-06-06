@@ -267,7 +267,7 @@ class ClientMainWindow(QMainWindow):
             # Проверим есть ли такой пользователь у нас в контактах:
             if self.database.check_contact(sender):
                 # Если есть, спрашиваем и желании открыть с ним чат и открываем при желании
-                if self.messages.question(self, 'Новое сообщение', \
+                if self.messages.question(self, 'Новое сообщение',
                                           f'Получено новое сообщение от {sender}, открыть чат с ним?', QMessageBox.Yes,
                                           QMessageBox.No) == QMessageBox.Yes:
                     self.current_chat = sender
@@ -275,7 +275,7 @@ class ClientMainWindow(QMainWindow):
             else:
                 print('NO')
                 # Раз нету,спрашиваем хотим ли добавить юзера в контакты.
-                if self.messages.question(self, 'Новое сообщение', \
+                if self.messages.question(self, 'Новое сообщение',
                                           f'Получено новое сообщение от {sender}.\n '
                                           f'Данного пользователя нет в вашем контакт-листе.\n '
                                           f'Добавить в контакты и открыть чат с ним?',

@@ -5,6 +5,8 @@ import logging
 import json
 import threading
 from PyQt5.QtCore import pyqtSignal, QObject
+
+from client.errors import ServerError
 from common.settings import *
 from common.common import send_msg, get_msg
 from logs import client_log_config
@@ -122,9 +124,9 @@ class ClientTransport(threading.Thread, QObject):
 
         if RESPONSE in message:
             if message[RESPONSE] == 200:
-                return '200 : OK'
+                return
             elif message[RESPONSE] == 400:
-                raise ERROR(f'400 : {message[ERROR]}')
+                raise ServerError(f'{message[ERROR]}')
             else:
                 CLIENT_LOGGER.debug(f'Принят неизвестный код подтверждения {message[RESPONSE]}')
 
