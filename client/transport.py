@@ -1,18 +1,16 @@
 import socket
 import sys
 import time
-import logging
 import json
 import threading
 from PyQt5.QtCore import pyqtSignal, QObject
 
+sys.path.append('../')
 from client.errors import ServerError
 from common.settings import *
 from common.common import send_msg, get_msg
 from logs import client_log_config
-from meta_classes import ClientVerifier
 
-sys.path.append('../')
 
 # инициализация клиентского логгера
 CLIENT_LOGGER = logging.getLogger(client_log_config.LOGGER_NAME)
@@ -26,6 +24,7 @@ class ClientTransport(threading.Thread, QObject):
     new_message = pyqtSignal(str)
     # сигнал потери соединения
     connection_lost = pyqtSignal()
+    message_205 = pyqtSignal()
 
     def __init__(self, port, ip_address, database, username):
         threading.Thread.__init__(self)
@@ -127,6 +126,10 @@ class ClientTransport(threading.Thread, QObject):
                 return
             elif message[RESPONSE] == 400:
                 raise ServerError(f'{message[ERROR]}')
+            elif message[RESPONSE] == 205:
+                self.user_list_update()
+                self.contacts_list_update()
+                self.message_205.emit()
             else:
                 CLIENT_LOGGER.debug(f'Принят неизвестный код подтверждения {message[RESPONSE]}')
 

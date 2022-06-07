@@ -1,12 +1,7 @@
 import argparse
-import json
 import sys
-import threading
-import time
 import logging
-from socket import *
-from sys import argv, exit
-from socket import socket
+from sys import exit
 
 from PyQt5.QtWidgets import QApplication
 
@@ -14,13 +9,9 @@ from client.database import ClientDatabase
 from client.main_window import ClientMainWindow
 from client.start_dialog import UserNameDialog
 from client.transport import ClientTransport
-from common.decos import Log
-from common.settings import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR, DEFAULT_IP_ADDRESS, \
-    DEFAULT_PORT, DEFAULT_CLIENT_MODE, MESSAGE, CLIENT_MODE_SEND, CLIENT_MODE_LISTEN, MESSAGE_TEXT, SENDER, RECEIVER, \
-    EXIT
+from common.settings import DEFAULT_IP_ADDRESS, \
+    DEFAULT_PORT
 from logs import client_log_config
-from meta_classes import ClientVerifier
-
 
 # инициализация клиентского логгера
 CLIENT_LOGGER = logging.getLogger(client_log_config.LOGGER_NAME)
