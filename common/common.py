@@ -41,7 +41,7 @@ from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADD
 #         encoded_message = serialised_message.encode(ENCODING)
 #         socket_.send(encoded_message)
 
-def get_msg(client):
+def get_message(client):
     """
     Прием и декодирование сообщения
     :param client:
@@ -59,7 +59,7 @@ def get_msg(client):
 
 
 @Log()
-def send_msg(socket_, message):
+def send_message(socket_, message):
     """
     Кодирование и отправка сообщения
     :param socket_:
@@ -72,16 +72,3 @@ def send_msg(socket_, message):
     serialised_message = json.dumps(message)  # переводим в байты
     encoded_message = serialised_message.encode(ENCODING)
     socket_.send(encoded_message)
-
-
-def port_check(port):
-    # порт
-    min_port, max_port = 1024, 65535
-    try:
-        if port < min_port or port > max_port:
-            raise ValueError
-    except ValueError:
-        print(f'Порт должен быть в диапазоне от {min_port} до {max_port}.')
-        exit(1)
-    else:
-        return port

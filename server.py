@@ -65,11 +65,13 @@ def main():
     config = config_load()
 
     # параметры для запуска сервера
-    server_address, server_port, gui_flag = arg_parser(config['SETTINGS']['listen_address'],
-                                             config['SETTINGS']['default_port'])
+    server_address, server_port, gui_flag = arg_parser(
+        config['SETTINGS']['listen_address'],
+        config['SETTINGS']['default_port'])
     # параметры для запуска бд
-    database = ServerStorage(os.path.join(config['SETTINGS']['database_path'],
-                                          config['SETTINGS']['database_file']))
+    database = ServerStorage(os.path.join(
+        config['SETTINGS']['database_path'],
+        config['SETTINGS']['database_file']))
 
     # запуск сервера
     server = MessageProcessor(server_address, server_port, database)

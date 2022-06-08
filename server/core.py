@@ -9,7 +9,7 @@ import os
 from common.meta_classes import ServerVerifier
 from common.descryptors import Port
 from common.variables import *
-from common.common import send_msg, get_msg
+from common.common import *
 from common.decos import login_required
 
 # Загрузка логера
@@ -88,7 +88,7 @@ class MessageProcessor(threading.Thread):
                 for client_with_message in recv_data_lst:
                     try:
                         self.process_client_message(
-                            get_msg(client_with_message), client_with_message)
+                            get_message(client_with_message), client_with_message)
                     except (OSError, json.JSONDecodeError, TypeError) as err:
                         logger.debug(f'Getting data from client exception.', exc_info=err)
                         self.remove_client(client_with_message)
@@ -142,7 +142,7 @@ class MessageProcessor(threading.Thread):
         if message[DESTINATION] in self.names and self.names[message[DESTINATION]
         ] in self.listen_sockets:
             try:
-                send_msg(self.names[message[DESTINATION]], message)
+                send_message(self.names[message[DESTINATION]], message)
                 logger.info(
                     f'Отправлено сообщение пользователю {message[DESTINATION]} от пользователя {message[SENDER]}.')
             except OSError:
@@ -180,14 +180,14 @@ class MessageProcessor(threading.Thread):
                     message[SENDER], message[DESTINATION])
                 self.process_message(message)
                 try:
-                    send_msg(client, RESPONSE_200)
+                    send_message(client, RESPONSE_200)
                 except OSError:
                     self.remove_client(client)
             else:
                 response = RESPONSE_400
                 response[ERROR] = 'Пользователь не зарегистрирован на сервере.'
                 try:
-                    send_msg(client, response)
+                    send_message(client, response)
                 except OSError:
                     pass
             return
@@ -203,7 +203,7 @@ class MessageProcessor(threading.Thread):
             response = RESPONSE_202
             response[LIST_INFO] = self.database.get_contacts(message[USER])
             try:
-                send_msg(client, response)
+                send_message(client, response)
             except OSError:
                 self.remove_client(client)
 
@@ -212,7 +212,7 @@ class MessageProcessor(threading.Thread):
                 and self.names[message[USER]] == client:
             self.database.add_contact(message[USER], message[ACCOUNT_NAME])
             try:
-                send_msg(client, RESPONSE_200)
+                send_message(client, RESPONSE_200)
             except OSError:
                 self.remove_client(client)
 
@@ -221,7 +221,7 @@ class MessageProcessor(threading.Thread):
                 and self.names[message[USER]] == client:
             self.database.remove_contact(message[USER], message[ACCOUNT_NAME])
             try:
-                send_msg(client, RESPONSE_200)
+                send_message(client, RESPONSE_200)
             except OSError:
                 self.remove_client(client)
 
@@ -232,7 +232,7 @@ class MessageProcessor(threading.Thread):
             response[LIST_INFO] = [user[0]
                                    for user in self.database.users_list()]
             try:
-                send_msg(client, response)
+                send_message(client, response)
             except OSError:
                 self.remove_client(client)
 
@@ -244,14 +244,14 @@ class MessageProcessor(threading.Thread):
             # тогда шлём 400)
             if response[DATA]:
                 try:
-                    send_msg(client, response)
+                    send_message(client, response)
                 except OSError:
                     self.remove_client(client)
             else:
                 response = RESPONSE_400
                 response[ERROR] = 'Нет публичного ключа для данного пользователя'
                 try:
-                    send_msg(client, response)
+                    send_message(client, response)
                 except OSError:
                     self.remove_client(client)
 
@@ -260,7 +260,7 @@ class MessageProcessor(threading.Thread):
             response = RESPONSE_400
             response[ERROR] = 'Запрос некорректен.'
             try:
-                send_msg(client, response)
+                send_message(client, response)
             except OSError:
                 self.remove_client(client)
 
@@ -281,7 +281,7 @@ class MessageProcessor(threading.Thread):
             response[ERROR] = 'Имя пользователя уже занято.'
             try:
                 logger.debug(f'Username busy, sending {response}')
-                send_msg(sock, response)
+                send_message(sock, response)
             except OSError:
                 logger.debug('OS Error')
                 pass
@@ -293,7 +293,7 @@ class MessageProcessor(threading.Thread):
             response[ERROR] = 'Пользователь не зарегистрирован.'
             try:
                 logger.debug(f'Unknown username, sending {response}')
-                send_msg(sock, response)
+                send_message(sock, response)
             except OSError:
                 pass
             self.clients.remove(sock)
@@ -314,8 +314,8 @@ class MessageProcessor(threading.Thread):
             logger.debug(f'Auth message = {message_auth}')
             try:
                 # Обмен с клиентом
-                send_msg(sock, message_auth)
-                ans = get_msg(sock)
+                send_message(sock, message_auth)
+                ans = get_message(sock)
             except OSError as err:
                 logger.debug('Error in auth, data:', exc_info=err)
                 sock.close()
@@ -328,7 +328,7 @@ class MessageProcessor(threading.Thread):
                 self.names[message[USER][ACCOUNT_NAME]] = sock
                 client_ip, client_port = sock.getpeername()
                 try:
-                    send_msg(sock, RESPONSE_200)
+                    send_message(sock, RESPONSE_200)
                 except OSError:
                     self.remove_client(message[USER][ACCOUNT_NAME])
                 # добавляем пользователя в список активных и если у него изменился открытый ключ
@@ -342,7 +342,7 @@ class MessageProcessor(threading.Thread):
                 response = RESPONSE_400
                 response[ERROR] = 'Неверный пароль.'
                 try:
-                    send_msg(sock, response)
+                    send_message(sock, response)
                 except OSError:
                     pass
                 self.clients.remove(sock)
@@ -356,6 +356,6 @@ class MessageProcessor(threading.Thread):
         """
         for client in self.names:
             try:
-                send_msg(self.names[client], RESPONSE_205)
+                send_message(self.names[client], RESPONSE_205)
             except OSError:
                 self.remove_client(self.names[client])
