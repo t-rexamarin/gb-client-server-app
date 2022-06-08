@@ -227,6 +227,29 @@ class ClientTransport(threading.Thread, QObject):
         else:
             logger.error('Не удалось обновить список известных пользователей.')
 
+    def key_request(self, user):
+        """
+        Метод запрашивающий с сервера публичный ключ пользователя
+        :param user:
+        :type user:
+        :return:
+        :rtype:
+        """
+        logger.debug(f'Запрос публичного ключа для {user}')
+        request = {
+            ACTION: PUBLIC_KEY_REQUEST,
+            TIME: time.time(),
+            ACCOUNT_NAME: user
+        }
+        with socket_lock:
+            send_message(self.transport, request)
+            answer = get_message(self.transport)
+
+        if RESPONSE in answer and answer[RESPONSE] == 511:
+            return answer[DATA]
+        else:
+            logger.error(f'Не удалось получить ключ собеседника{user}.')
+
     def add_contact(self, contact):
         """
         Функция сообщающая на сервер о добавлении нового контакта

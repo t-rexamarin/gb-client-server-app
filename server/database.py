@@ -7,10 +7,12 @@ from sqlalchemy.orm import mapper, Session
 class ServerStorage:
     # сущность юзера
     class Users:
-        def __init__(self, username):
+        def __init__(self, username, passwd_hash):
             self.id = None
             self.name = username
             self.last_login = datetime.datetime.now()
+            self.passwd_hash = passwd_hash
+            self.pubkey = None
 
     # сущность истории входов юзера
     class LoginHistory:
@@ -246,6 +248,76 @@ class ServerStorage:
             self.UsersContacts.contact == contact.id
         ).delete())
         self.session.commit()
+
+    def add_user(self, name, passwd_hash):
+        """
+        Метод регистрации пользователя.
+        Принимает имя и хэш пароля, создаёт запись в таблице статистики.
+        :param name:
+        :type name:
+        :param passwd_hash:
+        :type passwd_hash:
+        :return:
+        :rtype:
+        """
+        user_row = self.Users(name, passwd_hash)
+        self.session.add(user_row)
+        self.session.commit()
+        history_row = self.UsersHistory(user_row.id)
+        self.session.add(history_row)
+        self.session.commit()
+
+    def remove_user(self, name):
+        """
+        Метод удаляющий пользователя из базы
+        :param name:
+        :type name:
+        :return:
+        :rtype:
+        """
+        user = self.session.query(self.Users).filter_by(name=name).first()
+        self.session.query(self.ActiveUsers).filter_by(user=user.id).delete()
+        self.session.query(self.LoginHistory).filter_by(name=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(user=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(contact=user.id).delete()
+        self.session.query(self.UsersHistory).filter_by(user=user.id).delete()
+        self.session.query(self.Users).filter_by(name=name).delete()
+        self.session.commit()
+
+    def get_hash(self, name):
+        """
+        Метод получения хэша пароля пользователя
+        :param name:
+        :type name:
+        :return:
+        :rtype:
+        """
+        user = self.session.query(self.Users).filter_by(name=name).first()
+        return user.passwd_hash
+
+    def get_pubkey(self, name):
+        """
+        Метод получения публичного ключа пользователя
+        :param name:
+        :type name:
+        :return:
+        :rtype:
+        """
+        user = self.session.query(self.Users).filter_by(name=name).first()
+        return user.pubkey
+
+    def check_user(self, name):
+        """
+        Метод проверяющий существование пользователя
+        :param name:
+        :type name:
+        :return:
+        :rtype:
+        """
+        if self.session.query(self.Users).filter_by(name=name).count():
+            return True
+        else:
+            return False
 
     def users_list(self):
         """

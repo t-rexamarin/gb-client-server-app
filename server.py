@@ -58,9 +58,6 @@ def config_load():
 
 @Log()
 def main():
-    """
-    server.py -p 8889 -a 127.0.0.2
-    """
     # загрузка конфигурации сервера
     config = config_load()
 
