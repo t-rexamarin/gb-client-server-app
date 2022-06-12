@@ -12,8 +12,7 @@ from client.main_window import ClientMainWindow
 from client.start_dialog import UserNameDialog
 from client.transport import ClientTransport
 from common.errors import ServerError
-from common.settings import DEFAULT_IP_ADDRESS, \
-    DEFAULT_PORT
+from common.variables import *
 from logs import client_log_config
 
 # инициализация клиентского логгера
@@ -43,6 +42,7 @@ def arg_parser():
 def main():
     # загружаем параметы коммандной строки
     server_address, server_port, client_name, client_passwd = arg_parser()
+    CLIENT_LOGGER.debug('Args loaded')
 
     # создаем клиентское приложение
     client_app = QApplication(sys.argv)
@@ -91,22 +91,22 @@ def main():
         message = QMessageBox()
         message.critical(start_dialog, 'Ошибка сервера', error.text)
         exit(1)
-    else:
-        transport.setDaemon(True)
-        transport.start()
 
-        # Удалим объект диалога за ненадобностью
-        del start_dialog
+    transport.setDaemon(True)
+    transport.start()
 
-        # создаем gui
-        main_window = ClientMainWindow(database, transport)
-        main_window.make_connection(transport)
-        main_window.setWindowTitle(f'Чат Программа alpha release - {client_name}')
-        client_app.exec_()
+    # Удалим объект диалога за ненадобностью
+    del start_dialog
 
-        # раз графическая оболочка закрылась, закрываем транспорт
-        transport.transport_shutdown()
-        transport.join()
+    # создаем gui
+    main_window = ClientMainWindow(database, transport, keys)
+    main_window.make_connection(transport)
+    main_window.setWindowTitle(f'Чат Программа alpha release - {client_name}')
+    client_app.exec_()
+
+    # раз графическая оболочка закрылась, закрываем транспорт
+    transport.transport_shutdown()
+    transport.join()
 
 
 if __name__ == '__main__':

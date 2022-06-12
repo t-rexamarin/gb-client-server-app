@@ -1,6 +1,6 @@
 import unittest
 from common.common import port_check, address_check
-from common.settings import DEFAULT_IP_ADDRESS
+from common.settings_old import DEFAULT_IP_ADDRESS
 
 
 class TestsPort(unittest.TestCase):

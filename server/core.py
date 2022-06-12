@@ -6,9 +6,8 @@ import json
 import hmac
 import binascii
 import os
-from common.meta_classes import ServerVerifier
 from common.descryptors import Port
-from common.variables import *
+
 from common.common import *
 from common.decos import login_required
 

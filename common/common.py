@@ -1,46 +1,12 @@
 import json
-from sys import exit
+import sys
 
-from .decos import Log
-from .settings import ENCODING, MAX_PACKAGE_LENGTH, DEFAULT_PORT, DEFAULT_IP_ADDRESS, DEFAULT_CLIENT_MODE
+sys.path.append('../')
+from common.decos import Log
+from common.variables import *
 
 
-# class Common:
-#     def get_msg(self, message):
-#         """
-#         Прием и декодирование сообщения
-#         :param message:
-#         :type message:
-#         :return:
-#         :rtype:
-#         """
-#         msg = message.recv(MAX_PACKAGE_LENGTH)  # Принять не более MAX_PACKAGE_LENGTH байтов данных
-#         if isinstance(msg, bytes):
-#             json_response = msg.decode(ENCODING)
-#             if len(json_response) != 0:
-#                 response = json.loads(json_response)
-#                 if isinstance(response, dict):
-#                     return response
-#                 raise ValueError('Объект не является словарем')
-#             else:
-#                 # return
-#                 raise ValueError('Пришла пустая строка')
-#         raise ValueError('Пришли не байты')
-#
-#     def send_msg(self, socket_, message):
-#         """
-#         Кодирование и отправка сообщения
-#         :param socket_:
-#         :type socket_:
-#         :param message:
-#         :type message: dict
-#         :return:
-#         :rtype:
-#         """
-#         serialised_message = json.dumps(message)  # переводим в байты
-#         encoded_message = serialised_message.encode(ENCODING)
-#         socket_.send(encoded_message)
-
+@Log()
 def get_message(client):
     """
     Прием и декодирование сообщения
@@ -50,6 +16,7 @@ def get_message(client):
     :rtype:
     """
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
+    print(encoded_response)
     json_response = encoded_response.decode(ENCODING)
     response = json.loads(json_response)
     if isinstance(response, dict):

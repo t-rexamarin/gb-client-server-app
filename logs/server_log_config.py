@@ -2,8 +2,7 @@ import logging
 import os
 import sys
 from logging.handlers import TimedRotatingFileHandler
-from common.settings import LOGGING_LEVEL
-
+from common.variables import *
 
 LOGGER_NAME = 'server'
 

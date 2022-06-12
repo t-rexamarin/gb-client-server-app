@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import mapper, Session
 
 
@@ -62,7 +62,9 @@ class ServerStorage:
             'Users', self.metadata,
             Column('id', Integer, primary_key=True),
             Column('name', String(50), unique=True),
-            Column('last_login', DateTime)
+            Column('last_login', DateTime),
+            Column('passwd_hash', String),
+            Column('pubkey', Text)
         )
 
         # таблица истории входов
@@ -122,7 +124,7 @@ class ServerStorage:
         self.session.query(self.ActiveUsers).delete()
         self.session.commit()
 
-    def user_login(self, username, ip, port):
+    def user_login(self, username, ip, port, key):
         """
         Выполняется при входе пользователя, записывает в базу факт входа
         :param username:
@@ -139,17 +141,22 @@ class ServerStorage:
         result = self.session.query(self.Users).filter_by(name=username)
 
         # если пользователь есть, то обновляем дату последнего входа
+        # и проверяем корректность ключа. Если клиент прислал новый ключ,
+        # сохраняем его
         if result.count():
             user = result.first()
             user.last_login = datetime.datetime.now()
+            if user.pubkey != key:
+                user.pubkey = key
         # если нет, добавляем нового пользователя в таблицу
         else:
-            # в таблицу уходит экземпляр класса Users
-            user = self.Users(username)
-            self.session.add(user)
-            self.session.commit()  # коммитим чтобы присвоился id
-            user_in_history = self.UsersHistory(user.id)
-            self.session.add(user_in_history)  # добавляем его в историю. коммит в конце метода
+            raise ValueError('Пользователь не зарегистрирован.')
+            # # в таблицу уходит экземпляр класса Users
+            # user = self.Users(username)
+            # self.session.add(user)
+            # self.session.commit()  # коммитим чтобы присвоился id
+            # user_in_history = self.UsersHistory(user.id)
+            # self.session.add(user_in_history)  # добавляем его в историю. коммит в конце метода
 
         # создаем запись о новом активном юзере
         new_active_user = self.ActiveUsers(user_id=user.id,

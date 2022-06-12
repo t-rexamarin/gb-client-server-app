@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from common.settings import LOGGING_LEVEL
+from common.variables import *
 
 
 LOGGER_NAME = 'client'

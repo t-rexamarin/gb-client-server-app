@@ -92,6 +92,14 @@ class ClientDatabase:
             self.session.add(contact_row)
             self.session.commit()
 
+    def contacts_clear(self):
+        """
+        Метод очищающий таблицу со списком контактов
+        :return:
+        :rtype:
+        """
+        self.session.query(self.Contacts).delete()
+
     def del_contact(self, contact):
         """
         Удаление контакта
