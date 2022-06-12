@@ -1,12 +1,16 @@
 import datetime
-
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import mapper, Session
 
 
 class ServerStorage:
-    # сущность юзера
+    """
+    Серверное хранилище
+    """
     class Users:
+        """
+        Сущность юзера
+        """
         def __init__(self, username, passwd_hash):
             self.id = None
             self.name = username
@@ -14,8 +18,10 @@ class ServerStorage:
             self.passwd_hash = passwd_hash
             self.pubkey = None
 
-    # сущность истории входов юзера
     class LoginHistory:
+        """
+        Сущность истории входов юзера
+        """
         def __init__(self, user, date_time, ip, port):
             self.id = None
             self.user = user
@@ -23,8 +29,10 @@ class ServerStorage:
             self.ip = ip
             self.port = port
 
-    # сущность активных юзеров
     class ActiveUsers:
+        """
+        Сущность активных юзеров
+        """
         def __init__(self, user_id, login_time, ip, port):
             self.id = None
             self.user = user_id
@@ -32,15 +40,19 @@ class ServerStorage:
             self.port = port
             self.login_time = login_time
 
-    # сущность контактов пользователей
     class UsersContacts:
+        """
+        Сущность контактов пользователей
+        """
         def __init__(self, user, contact):
             self.id = None
             self.user = user
             self.contact = contact
 
-    # сущность истории действий
     class UsersHistory:
+        """
+        Сущность истории действий
+        """
         def __init__(self, user):
             self.id = None
             self.user = user

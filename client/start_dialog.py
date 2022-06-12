@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QDialog, QPushButton, QLineEdit, QApplication, QLabel, qApp
 
 
-# Стартовый диалог с выбором имени пользователя
 class UserNameDialog(QDialog):
+    """
+    Стартовый диалог с выбором имени пользователя
+    """
     def __init__(self):
         super().__init__()
 

@@ -2,16 +2,12 @@ import threading
 import logging
 import select
 import socket
-import json
 import hmac
 import binascii
 import os
 from common.descryptors import Port
-
 from common.common import *
 from common.decos import login_required
-
-# Загрузка логера
 from logs import server_log_config
 
 SERVER_LOGGER = logging.getLogger(server_log_config.LOGGER_NAME)

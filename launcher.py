@@ -1,40 +1,34 @@
 """Лаунчер"""
 import os
-import signal
 import subprocess
-from time import sleep
 
-PROCESS = []
 
-while True:
-    ACTION = input('Выберите действие: q - выход, '
-                   's - запустить сервер и клиенты, x - закрыть все окна: ')
+def main():
+    process = []
 
-    if ACTION == 'q':
-        break
-    elif ACTION == 's':
-        PROCESS.append(subprocess.Popen('gnome-terminal -- python3 server.py',
-                                        shell=True,
-                                        stdout=subprocess.PIPE,
-                                        preexec_fn=os.setsid))
+    while True:
+        action = input('Выберите действие: '
+                       'q - выход, '
+                       's - запустить сервер, '
+                       'c - запустить ктиенты, '
+                       'x - закрыть все окна: ')
 
-        while True:
-            CLIENTS = input('Сколько клиентов запустить?: ')
-            try:
-                CLIENTS = int(CLIENTS)
-            except ValueError:
-                print('Укажите числом кол-во клиентов.')
-            else:
-                break
-
-        for i in range(CLIENTS):
-            PROCESS.append(subprocess.Popen(f'gnome-terminal -- python3 client.py -n Test{i}',
+        if action == 'q':
+            break
+        elif action == 's':
+            process.append(subprocess.Popen('gnome-terminal -- python3 server.py',
                                             shell=True,
                                             stdout=subprocess.PIPE,
                                             preexec_fn=os.setsid))
-    elif ACTION == 'x':
-        while PROCESS:
-            VICTIM = PROCESS.pop()
-            VICTIM.kill()
-            # VICTIM.terminate()
-            # os.killpg(os.getpgid(VICTIM.pid), signal.SIGKILL)
+        elif action == 'c':
+            clients_count = int(input('Введите количество тестовых клиентов для запуска: '))
+            for i in range(clients_count):
+                process.append(subprocess.Popen(f'gnome-terminal -- python3 client.py -n test{i + 1} -p 123456',
+                                                shell=True,
+                                                stdout=subprocess.PIPE,
+                                                preexec_fn=os.setsid))
+        elif action == 'x':
+            while process:
+                process.pop().kill()
+                #  process.pop().terminate()
+                # os.killpg(os.getpgid( process.pop().pid), signal.SIGKILL)

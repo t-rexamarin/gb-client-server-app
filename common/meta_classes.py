@@ -1,8 +1,10 @@
 import dis
 
 
-# Метакласс для проверки соответствия сервера:
 class ServerVerifier(type):
+    """
+    Метакласс для проверки соответствия сервера
+    """
     def __init__(self, clsname, bases, clsdict):
         """
         :param clsname: экземпляр метакласса - Server
@@ -58,6 +60,9 @@ class ServerVerifier(type):
 
 
 class ClientVerifier(type):
+    """
+    Метакласс для проверки соответствия клиента
+    """
     def __init__(self, clsname, bases, clsdict):
         # необходимые методы
         """'get_msg' - почему то не находится в клиента, хотя вызов на 106 строке"""

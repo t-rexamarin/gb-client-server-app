@@ -4,7 +4,9 @@ import os
 
 
 class ConfigWindow(QDialog):
-    """Класс окно настроек"""
+    """
+    Класс окно настроек
+    """
 
     def __init__(self, config):
         super().__init__()
@@ -12,7 +14,9 @@ class ConfigWindow(QDialog):
         self.initUI()
 
     def initUI(self):
-        """Настройки окна"""
+        """
+        Настройки окна
+        """
         self.setFixedSize(365, 260)
         self.setWindowTitle('Настройки сервера')
         self.setAttribute(Qt.WA_DeleteOnClose)

@@ -21,7 +21,6 @@ from common.variables import *
 CLIENT_LOGGER = logging.getLogger(client_log_config.LOGGER_NAME)
 
 
-# Класс основного окна
 class ClientMainWindow(QMainWindow):
     """
     Класс - основное окно пользователя.

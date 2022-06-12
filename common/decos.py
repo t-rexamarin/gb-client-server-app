@@ -1,7 +1,3 @@
-"""
-...в логе должна быть отражена информация:
-"<дата-время> Функция func_z() вызвана из функции main"
-"""
 import socket
 import traceback
 import logging
@@ -22,7 +18,7 @@ else:
 
 class Log:
     """
-    класс-логер вызванных функций
+    Класс-логер вызванных функций
     """
     def __call__(self, func):
         def decorated(*args, **kwargs):
