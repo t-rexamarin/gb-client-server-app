@@ -1,8 +1,8 @@
 import unittest
-from client import Client
+from pack_client.client import Client
 from common.settings_old import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, RESPONSE, DEFAULT_PORT, DEFAULT_IP_ADDRESS, \
     MAX_CONNECTIONS, ERROR
-from server import Server
+from pack_server.server import Server
 
 
 class ServerTests(unittest.TestCase):

@@ -1,5 +1,5 @@
 import unittest
-from client import Client
+from pack_client.client import Client
 from common.settings_old import DEFAULT_PORT, DEFAULT_IP_ADDRESS, ACTION, TIME, USER, ACCOUNT_NAME, RESPONSE, ERROR
 
 

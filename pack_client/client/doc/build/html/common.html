@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Common module &#8212; документация Messanger 1.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Logs package" href="logs.html" />
+    <link rel="prev" title="Launcher module" href="launcher.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="common-module">
+<h1>Common module<a class="headerlink" href="#common-module" title="Permalink to this heading">¶</a></h1>
+<p>Пакет общий утилит, использующихся в разных модулях проекта</p>
+<section id="module-common.common">
+<span id="common-py"></span><h2>Скрипт common.py<a class="headerlink" href="#module-common.common" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-common.decos">
+<span id="decos-py"></span><h2>Скрипт decos.py<a class="headerlink" href="#module-common.decos" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="common.decos.Log">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.decos.</span></span><span class="sig-name descname"><span class="pre">Log</span></span><a class="headerlink" href="#common.decos.Log" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Класс-логер вызванных функций</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="common.decos.login_required">
+<span class="sig-prename descclassname"><span class="pre">common.decos.</span></span><span class="sig-name descname"><span class="pre">login_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#common.decos.login_required" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Декоратор, проверяющий, что клиент авторизован на сервере.
+Проверяет, что передаваемый объект сокета находится в списке авторизованных клиентов.
+За исключением передачи словаря-запроса на авторизацию.
+Если клиент не авторизован, генерирует исключение TypeError
+:param func:
+:type func:
+:return:
+:rtype:</p>
+</dd></dl>
+
+</section>
+<section id="descryptors-py">
+<h2>Скрипт descryptors.py<a class="headerlink" href="#descryptors-py" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="common.descryptors.Port">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.descryptors.</span></span><span class="sig-name descname"><span class="pre">Port</span></span><a class="headerlink" href="#common.descryptors.Port" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Класс - дескриптор для номера порта.
+Позволяет использовать только порты с 1023 по 65536.
+При попытке установить неподходящий номер порта генерирует исключение.</p>
+</dd></dl>
+
+</section>
+<section id="errors-py">
+<h2>Скрипт errors.py<a class="headerlink" href="#errors-py" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="common.errors.ServerError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.errors.</span></span><span class="sig-name descname"><span class="pre">ServerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#common.errors.ServerError" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Исключение - ошибка сервера</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="common.errors.ReqFieldMissingError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.errors.</span></span><span class="sig-name descname"><span class="pre">ReqFieldMissingError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">missing_field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#common.errors.ReqFieldMissingError" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Ошибка - отсутствует обязательное поле в принятом словаре</p>
+</dd></dl>
+
+</section>
+<section id="meta-classes-py">
+<h2>Скрипт meta_classes.py<a class="headerlink" href="#meta-classes-py" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="common.meta_classes.ServerVerifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.meta_classes.</span></span><span class="sig-name descname"><span class="pre">ServerVerifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clsname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clsdict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#common.meta_classes.ServerVerifier" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Метакласс для проверки соответствия сервера</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="common.meta_classes.ClientVerifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">common.meta_classes.</span></span><span class="sig-name descname"><span class="pre">ClientVerifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clsname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clsdict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#common.meta_classes.ClientVerifier" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Метакласс для проверки соответствия клиента</p>
+</dd></dl>
+
+</section>
+<section id="variables-py">
+<h2>Скрипт variables.py<a class="headerlink" href="#variables-py" title="Permalink to this heading">¶</a></h2>
+<p>Содержит разные глобальные переменные проекта.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Messanger</a></h1>
+
+
+
+
+
+
+
+
+<h3>Навигация</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="launcher.html">Launcher module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Common module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-common.common">Скрипт common.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-common.decos">Скрипт decos.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#descryptors-py">Скрипт descryptors.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#errors-py">Скрипт errors.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meta-classes-py">Скрипт meta_classes.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables-py">Скрипт variables.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logs.html">Logs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="launcher.html" title="предыдущая глава">Launcher module</a></li>
+      <li>Next: <a href="logs.html" title="следующая глава">Logs package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Roma.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/common.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
